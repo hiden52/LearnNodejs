@@ -1,0 +1,24 @@
+{
+  "name": "learnnodejs",
+  "version": "1.0.0",
+  "description": "Learning Node",
+  "main": "index.js",
+  "dependencies": {
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hiden52/LearnNodejs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hiden52/LearnNodejs/issues"
+  },
+  "homepage": "https://github.com/hiden52/LearnNodejs#readme"
+}
