@@ -23,5 +23,9 @@
   "homepage": "https://github.com/hiden52/LearnNodejs#readme",
   "keywords": [
     "learn"
-  ]
+  ],
+
+  "optionalDependencies": {
+    "fsevents": "*"
+  }
 }
