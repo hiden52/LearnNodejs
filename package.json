@@ -1,5 +1,5 @@
 {
-  "name": "learnnodejs",
+  "name": "learning-node",
   "version": "1.0.0",
   "description": "Learning Node",
   "main": "index.js",
@@ -15,10 +15,13 @@
     "type": "git",
     "url": "git+https://github.com/hiden52/LearnNodejs.git"
   },
-  "author": "",
+  "author": "saigony",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/hiden52/LearnNodejs/issues"
   },
-  "homepage": "https://github.com/hiden52/LearnNodejs#readme"
+  "homepage": "https://github.com/hiden52/LearnNodejs#readme",
+  "keywords": [
+    "learn"
+  ]
 }
