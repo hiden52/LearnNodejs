@@ -20,7 +20,7 @@ app.post("/", (req, res) => {
 
 app.get("/bmicalculator", (req, res) => {
     res.sendFile( __dirname + "/bmiCalculator.html");
-})
+});
 app.post("/bmicalculator", (req, res) => {
     let height = parseFloat(req.body.height);
     let weight = parseFloat(req.body.weight);
