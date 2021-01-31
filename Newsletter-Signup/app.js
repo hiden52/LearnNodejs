@@ -56,20 +56,25 @@ app.post("/", (req, res) => {
 		email: email,
 	};
 	// Setting api key and server
-	
+
 	const listId = "e991bcecf8";
 
 	const run = async () => {
-		const response = await mailChimp.lists.addListMember(listId, {
-			email_address: subscribeingUser.email,
-			status: "subscribed",
-			merge_fields: {
-				FNAME: subscribeingUser.firstName,
-				LNAME: subscribeingUser.lastName,
-			},
-		});
-
-		//console.log(response);
+		try {
+			const response = await mailChimp.lists.addListMember(listId, {
+				email_address: subscribeingUser.email,
+				status: "subscribed",
+				merge_fields: {
+					FNAME: subscribeingUser.firstName,
+					LNAME: subscribeingUser.lastName,
+				},
+			});
+            console.log(response);
+            res.sendFile(__dirname + "/html/success.html");
+		} catch (error) {
+            console.log(error.status);
+            res.sendFile(__dirname + "/html/failure.html");
+        }
 	};
 
 	run();
