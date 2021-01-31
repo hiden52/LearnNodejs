@@ -31,6 +31,6 @@ app.post("/bmicalculator", (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log("Sever started");
+    console.log("Sever started"); 
 });
 
