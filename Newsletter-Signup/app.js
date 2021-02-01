@@ -79,7 +79,7 @@ app.post("/", (req, res) => {
 	};
 
 	run();
-});
+}); 
 
 // Click button -> redirect to main page
 app.post("/failure", (req, res) => {
