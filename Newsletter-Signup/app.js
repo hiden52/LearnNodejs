@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const https = require("https");
 const mailChimp = require("@mailchimp/mailchimp_marketing");
+require("dotenv").config();	// env 환경설정 파일을 로드하기 위한 모듈
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -57,7 +58,7 @@ app.post("/", (req, res) => {
 	};
 	// Setting api key and server
 
-	const listId = "e991bcecf8";
+	const listId = process.env.LIST_ID;	// in .env
 
 	const run = async () => {
 		try {
@@ -80,7 +81,7 @@ app.post("/", (req, res) => {
 	run();
 });
 
-const mailChimpApiKey = "70a60a5e20f865b92c4ea129ef5ef24c-us7";
+const mailChimpApiKey = process.env.API_KEY; //	in .env
 mailChimp.setConfig({
 	apiKey: mailChimpApiKey,
 	server: "us7",
