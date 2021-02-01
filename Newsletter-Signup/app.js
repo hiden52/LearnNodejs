@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const https = require("https");
 const mailChimp = require("@mailchimp/mailchimp_marketing");
-require("dotenv").config();	// env 환경설정 파일을 로드하기 위한 모듈
+require("dotenv").config(); // env 환경설정 파일을 로드하기 위한 모듈
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -58,7 +58,7 @@ app.post("/", (req, res) => {
 	};
 	// Setting api key and server
 
-	const listId = process.env.LIST_ID;	// in .env
+	const listId = process.env.LIST_ID; // in .env
 
 	const run = async () => {
 		try {
@@ -70,15 +70,20 @@ app.post("/", (req, res) => {
 					LNAME: subscribeingUser.lastName,
 				},
 			});
-            console.log(response);
-            res.sendFile(__dirname + "/html/success.html");
+			console.log(response);
+			res.sendFile(__dirname + "/html/success.html");
 		} catch (error) {
-            console.log(error.status);
-            res.sendFile(__dirname + "/html/failure.html");
-        }
+			console.log(error.status);
+			res.sendFile(__dirname + "/html/failure.html");
+		}
 	};
 
 	run();
+});
+
+// Click button -> redirect to main page
+app.post("/failure", (req, res) => {
+	res.redirect("/");
 });
 
 const mailChimpApiKey = process.env.API_KEY; //	in .env
