@@ -6,7 +6,7 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const port = 3000;
-let items = ["Coding", "Learn JS", "Master React"];
+let items = ["Coding", "Learn JS", "Master Rea"];
 
 app.get("/", (req, res) => {
   const today = new Date();
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
   };
 
   const day = today.toLocaleDateString("en-US", options);
-
+  // not good
   //   switch (currentDay) {
   //     case 0:
   //       day = "Sunday";
