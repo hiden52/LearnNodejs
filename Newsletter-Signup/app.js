@@ -6,7 +6,7 @@ require("dotenv").config(); // env 환경설정 파일을 로드하기 위한 �
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.static("public"));
 
@@ -73,7 +73,8 @@ app.post("/", (req, res) => {
 			console.log(response);
 			res.sendFile(__dirname + "/html/success.html");
 		} catch (error) {
-			console.log(error.status);
+			console.log(error);
+			console.log("Error");
 			res.sendFile(__dirname + "/html/failure.html");
 		}
 	};
