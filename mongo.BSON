@@ -1,0 +1,19 @@
+db.product.updateOne (
+    {_id : 2},
+    {
+        $set: {
+            reviews: [
+                {
+                    authorName: "Henry",
+                    rating: 5,
+                    review: "This is a Perfect Sharp-pen!!"
+                }, {
+                    authorName: "John",
+                    rating: 1,
+                    review: "This is worst pen I've ever used..."
+                }
+                
+            ]
+        }
+    }
+)
