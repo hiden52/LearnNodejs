@@ -22,13 +22,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-    posts.forEach((e)=> {
-        e.body = _.truncate(e.body, {
-            'length': 100,
-            'omission': '...'
-        });
-    })
-  res.render("home.ejs", { content: homeStartingContent, posts: posts });
+    // posts.forEach((e)=> {
+    //     e.body = _.truncate(e.body, {
+    //         'length': 100,
+    //         'omission': '...'
+    //     });
+    // })
+  res.render("home.ejs", { content: homeStartingContent, posts: posts});
   //console.log(posts);
 });
 
@@ -63,10 +63,11 @@ app.get("/posts/:postTitle", (req, res) => {
 
       if (postsTitle === reqTitle) {
           //console.log("Match Found");
-          res.render("post.ejs", {post: e});
-      } else {
-          console.log("Not a Match");
-      }
+          res.render("post", {post: e});
+      } 
+    //   else {
+    //       console.log("Not a Match");
+    //   }
   });
   //res.render(req.params.nav + ".ejs", { content: aboutContent });
 });
