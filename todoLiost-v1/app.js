@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 const port = 3000;
 
-const items = ["Coding", "Learn JS", "Master Rea"];
+const items = ["Coding", "Learn JS", "Master React"];
 
 app.get("/", (req, res) => {
     // not good
@@ -38,11 +38,11 @@ app.get("/", (req, res) => {
     //       console.log("Error: current day is equal to: " + currentDay);
     //   }
     const day = date.getDate();
-    res.render("list", { kindOfDay: day, newTasks: items });
+    res.render("list", { kindOfDay: day, tasks: items });
 });
 
 app.post("/", (req, res) => {
-    item = req.body.task;
+    const item = req.body.task;
     items.push(item);
 
     res.redirect("/");
