@@ -31,34 +31,15 @@ const buySnacks = new Task({ name: "Buy some snacks" });
 
 const defaultTasks = [coding, study, buySnacks];
 
+const listSchema = {
+    name : String,
+    items : [taskSchema]
+}
+
+const List = mongoose.model("list", listSchema);
+
 app.get("/", (req, res) => {
-    // not good
-    //   switch (currentDay) {
-    //     case 0:
-    //       day = "Sunday";
-    //       break;
-    //     case 1:
-    //       day = "Monday";
-    //       break;
-    //     case 2:
-    //       day = "Tuesday";
-    //       break;
-    //     case 3:
-    //       day = "Wendsday";
-    //       break;
-    //     case 4:
-    //       day = "Thursday";
-    //       break;
-    //     case 5:
-    //       day = "Friday";
-    //       break;
-    //     case 6:
-    //       day = "Saturday";
-    //       break;
-    //     default:
-    //       console.log("Error: current day is equal to: " + currentDay);
-    //   }
-    const day = date.getDate();
+    const day = date.getDate(); // Using switch statemnt is not good
 
     Task.find({}, (err, tasks) => {
         if (tasks.length === 0) {
@@ -73,26 +54,35 @@ app.get("/", (req, res) => {
     });
 });
 
-// 루트페이지로 들어가면 버그발생 ㅜㅜ 고치자!
+app.get('/favicon.ico', (req,res)=>{
+    return 'your faveicon'
+   })
+
 app.get("/:categoryName", (req, res) => {
+    // 02.10 10:05 코드 다시짜자
+
     const category = req.params.categoryName;
 
-    const collections = mongoose.modelNames();
-    collections.forEach((col, i) => {
-        if(col === category) {
-            console.log("It name of collection exists!");
-            const NewCategory = mongoose.model(category);
+    List.findOne({name: category}, (err, foundList) => {
+        if(!err) {
+            if(!foundList){
+                const list = new List({
+                    name: category,
+                    items: defaultTasks
+                });
+                list.save();
+                res.redirect("/" + category);
+            } else {
+                res.render("list", {
+                    kindOfDay: foundList.name,
+                    tasks: foundList.items
+                });
+            }
+        } else {
+            console.log(err);
         }
-        if(i === collections.length) {const NewCategory = mongoose.model(category, taskSchema);}
-
     });
-    
-
-    NewCategory.find({}, (err, tasks) =>{
-        res.render("list", {kindOfDay: category, tasks: tasks});
-    });
-    console.log(mongoose.modelNames());
-
+   
 });
 
 app.post("/", (req, res) => {
