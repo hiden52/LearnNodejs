@@ -36,6 +36,8 @@ const listSchema = {
     items : [taskSchema]
 }
 
+// 매번 새로운 collection을 만들지 말고 하나의 collection에 document를 만들고
+// array로 여러 목록을 관리
 const List = mongoose.model("list", listSchema);
 
 app.get("/", (req, res) => {
