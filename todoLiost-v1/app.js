@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const date = require(__dirname + "/date.js");
+const _ = require("lodash");
 
 const app = express();
 app.set("view engine", "ejs");
@@ -13,6 +14,7 @@ const items = ["Coding", "Learn JS", "Master React"];
 mongoose.connect("mongodb://localhost:27017/todolistDB", {
     useUnifiedTopology: true,
     useNewUrlParser: true,
+    useFindAndModify: false,
 });
 
 const taskSchema = {
@@ -32,9 +34,9 @@ const buySnacks = new Task({ name: "Buy some snacks" });
 const defaultTasks = [coding, study, buySnacks];
 
 const listSchema = {
-    name : String,
-    items : [taskSchema]
-}
+    name: String,
+    items: [taskSchema],
+};
 
 // 매번 새로운 collection을 만들지 말고 하나의 collection에 document를 만들고
 // property : array로 여러 목록을 관리
@@ -52,84 +54,83 @@ app.get("/", (req, res) => {
                     res.redirect("/");
                 }
             });
-        } else res.render("list", { kindOfDay: day, tasks: tasks });
+        } else res.render("list", { listTitle: day, tasks: tasks });
     });
 });
 
 app.get("/:categoryName", (req, res) => {
     // 02.10 10:05 코드 다시짜자
 
-    const category = req.params.categoryName;
+    const category = _.capitalize(req.params.categoryName);
 
-    List.findOne({name: category}, (err, foundList) => {
-        if(!err) {
-            if(!foundList){
+    List.findOne({ name: category }, (err, foundList) => {
+        if (!err) {
+            if (!foundList) {
                 const list = new List({
                     name: category,
-                    items: defaultTasks
+                    items: defaultTasks,
                 });
                 list.save();
                 res.redirect("/" + category);
             } else {
                 res.render("list", {
-                    kindOfDay: foundList.name,
-                    tasks: foundList.items
+                    listTitle: foundList.name,
+                    tasks: foundList.items,
                 });
             }
         } else {
             console.log(err);
         }
     });
-   
 });
 
 app.post("/", (req, res) => {
-    // const item = req.body.task;
-    // items.push(item);
-    
     const postFrom = req.body.submitPost;
     const taskName = req.body.task;
     //console.log(postFrom);
-    if(postFrom === date.getDate()) {
-        const newtask = new Task({ name: req.body.task });    
+    if (postFrom === date.getDate()) {
+        const newtask = new Task({ name: req.body.task });
         newtask.save();
-    
+
         res.redirect("/");
     } else {
-        List.findOne({name: postFrom}, (err, foundDoc) => {
-            if(!err) {
-                foundDoc.items.push(Task({name: taskName}));
+        List.findOne({ name: postFrom }, (err, foundDoc) => {
+            if (!err) {
+                foundDoc.items.push(Task({ name: taskName }));
                 foundDoc.save();
-                res.redirect("/" + postFrom);                
+                res.redirect("/" + postFrom);
             }
-            
-        });  
+        });
     }
-});
-    
-app.post("/:categoryName", (req, res) => {
-    const category = req.params.categoryName;
-    const NewCategory = mongoose.model(category);
-    const newtask = new NewCategory({ name: req.body.task });
-    newtask.save();
-
-    res.redirect("/" + category);
 });
 
 //  root 페이지가 아닌 다른 곳에서 딜리트 할 경우를 구현해야함.
 app.post("/delete", (req, res) => {
     const checkedTaskId = req.body.checkbox;
-    if (checkedTaskId) {
-        Task.findByIdAndDelete(checkedTaskId, (err) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log("Successfully deleted the document!");
-            }
-        });
-    }
+    const listName = req.body.listName;
 
-    res.redirect("/");
+
+    if(listName === date.getDate()) {
+        Task.findByIdAndDelete(checkedTaskId, (err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log("Successfully deleted the document!");
+                }
+            });
+        res.redirect("/");
+    } else {
+        List.findOneAndUpdate(
+            {name: listName},
+            {$pull: {items: {_id : checkedTaskId}}},
+            (err) => {
+                if (!err) res.redirect("/" + listName);
+                else console.log(err);
+            }
+        );
+    }
+    
+
 });
 
 app.listen(port, () => {
