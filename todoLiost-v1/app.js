@@ -37,7 +37,7 @@ const listSchema = {
 }
 
 // 매번 새로운 collection을 만들지 말고 하나의 collection에 document를 만들고
-// array로 여러 목록을 관리
+// property : array로 여러 목록을 관리
 const List = mongoose.model("list", listSchema);
 
 app.get("/", (req, res) => {
@@ -55,10 +55,6 @@ app.get("/", (req, res) => {
         } else res.render("list", { kindOfDay: day, tasks: tasks });
     });
 });
-
-app.get('/favicon.ico', (req,res)=>{
-    return 'your faveicon'
-   })
 
 app.get("/:categoryName", (req, res) => {
     // 02.10 10:05 코드 다시짜자
@@ -90,11 +86,27 @@ app.get("/:categoryName", (req, res) => {
 app.post("/", (req, res) => {
     // const item = req.body.task;
     // items.push(item);
-    const newtask = new Task({ name: req.body.task });
-    newtask.save();
-
-    res.redirect("/");
+    
+    const postFrom = req.body.submitPost;
+    const taskName = req.body.task;
+    //console.log(postFrom);
+    if(postFrom === date.getDate()) {
+        const newtask = new Task({ name: req.body.task });    
+        newtask.save();
+    
+        res.redirect("/");
+    } else {
+        List.findOne({name: postFrom}, (err, foundDoc) => {
+            if(!err) {
+                foundDoc.items.push(Task({name: taskName}));
+                foundDoc.save();
+                res.redirect("/" + postFrom);                
+            }
+            
+        });  
+    }
 });
+    
 app.post("/:categoryName", (req, res) => {
     const category = req.params.categoryName;
     const NewCategory = mongoose.model(category);
@@ -104,6 +116,7 @@ app.post("/:categoryName", (req, res) => {
     res.redirect("/" + category);
 });
 
+//  root 페이지가 아닌 다른 곳에서 딜리트 할 경우를 구현해야함.
 app.post("/delete", (req, res) => {
     const checkedTaskId = req.body.checkbox;
     if (checkedTaskId) {
