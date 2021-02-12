@@ -1,0 +1,17 @@
+## Ignore File ##
+
+*.env
+/*.env
+
+## Node Modules ##
+node_modules
+/node_modules
+
+## NPM ##
+npm-debug.log
+
+## Temp ##
+mongo.BSON
+
+npm-debug.log
+.DS_Store

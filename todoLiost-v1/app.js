@@ -10,7 +10,7 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-const port = 3000;
+const port = process.env.PORT ?? 3000 ;
 
 const items = ["Coding", "Learn JS", "Master React"];
 mongoose.connect(
@@ -51,15 +51,19 @@ app.get("/", (req, res) => {
     const day = date.getDate(); // Using switch statemnt is not good
 
     Task.find({}, (err, tasks) => {
-        if (tasks.length === 0) {
-            Task.insertMany(defaultTasks, (err) => {
-                if (err) console.log(err);
-                else {
-                    console.log("Successfully insert docs!");
-                    res.redirect("/");
-                }
-            });
-        } else res.render("list", { listTitle: day, tasks: tasks });
+        if(!err) {
+            if (tasks.length === 0) {
+                Task.insertMany(defaultTasks, (err) => {
+                    if (err) console.log(err);
+                    else {
+                        console.log("Successfully insert docs!");
+                        res.redirect("/");
+                    }
+                });
+            } else res.render("list", { listTitle: day, tasks: tasks });
+        } else {
+            console.log(err);
+        }        
     });
 });
 
@@ -136,5 +140,5 @@ app.post("/delete", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("Server started on port " + port);
+    console.log("Server has started on port " + port);
 });
