@@ -3,7 +3,9 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const date = require(__dirname + "/date.js");
 const _ = require("lodash");
+const dotenv = require("dotenv");
 
+dotenv.config();
 const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -11,11 +13,14 @@ app.use(express.static("public"));
 const port = 3000;
 
 const items = ["Coding", "Learn JS", "Master React"];
-mongoose.connect("mongodb://localhost:27017/todolistDB", {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useFindAndModify: false,
-});
+mongoose.connect(
+    `mongodb+srv://hiden52:${process.env.MONGO_PASSWORD}@cluster0.njaux.mongodb.net/todolistDB?retryWrites=true&w=majority`,
+    {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        useFindAndModify: false,
+    }
+);
 
 const taskSchema = {
     name: {
@@ -109,28 +114,25 @@ app.post("/delete", (req, res) => {
     const checkedTaskId = req.body.checkbox;
     const listName = req.body.listName;
 
-
-    if(listName === date.getDate()) {
+    if (listName === date.getDate()) {
         Task.findByIdAndDelete(checkedTaskId, (err) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("Successfully deleted the document!");
-                }
-            });
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Successfully deleted the document!");
+            }
+        });
         res.redirect("/");
     } else {
         List.findOneAndUpdate(
-            {name: listName},
-            {$pull: {items: {_id : checkedTaskId}}},
+            { name: listName },
+            { $pull: { items: { _id: checkedTaskId } } },
             (err) => {
                 if (!err) res.redirect("/" + listName);
                 else console.log(err);
             }
         );
     }
-    
-
 });
 
 app.listen(port, () => {
