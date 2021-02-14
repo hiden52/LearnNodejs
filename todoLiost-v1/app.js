@@ -69,7 +69,7 @@ app.get("/", (req, res) => {
 
 app.get("/:categoryName", (req, res) => {
     // 02.10 10:05 코드 다시짜자
-
+    // 다시 짬 ㅇㅇ
     const category = _.capitalize(req.params.categoryName);
 
     List.findOne({ name: category }, (err, foundList) => {
