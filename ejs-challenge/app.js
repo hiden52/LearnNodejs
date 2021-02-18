@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
+const mongoose = require("mongoose");
 
 const homeStartingContent =
   "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
@@ -12,7 +13,28 @@ const aboutContent =
 const contactContent =
   "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
-const posts = [];
+// Setting mogoDB
+mongoose.connect(
+  "mongodb://localhost:27017/blogDB", //
+  {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  }
+);
+
+const postSchema = mongoose.Schema({
+  title: {
+    required: [true, "Please add a title !!"],
+    type: String,
+  },
+  content: String,
+});
+
+const Post = new mongoose.model("Post", postSchema);
+// mongoDB setting---
+
+// DB를 사용해서 더이상 필요 없음
+// const posts = [];
 
 const app = express();
 
@@ -22,65 +44,46 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-    // posts.forEach((e)=> {
-    //     e.body = _.truncate(e.body, {
-    //         'length': 100,
-    //         'omission': '...'
-    //     });
-    // })
-  res.render("home.ejs", { content: homeStartingContent, posts: posts});
-  //console.log(posts);
+  Post.find({}, (err, posts) => {
+    if (!err) {
+      return new Promise((resolve, reject) => {
+        if (posts) resolve(posts);
+        else reject(new Error("No posts in DB!"));
+      });
+    } else {
+      console.log(err);
+    }
+  }) //
+    .then((posts) =>
+      res.render("home.ejs", { content: homeStartingContent, posts })
+    );
 });
 
 app.get("/:nav", (req, res) => {
-  //console.log(req.params);
   res.render(req.params.nav + ".ejs", { content: aboutContent });
 });
 
-/*
+app.get("/posts/:postID", (req, res) => {
+  const reqPostID = req.params.postID;
 
-    app.get("/about", (req, res) => {
-    res.render("about.ejs", { content: aboutContent });
+  Post.findOne({ _id: reqPostID }, (err, post) => {
+    return new Promise((resolve, reject) => {
+      if (!err) resolve(post);
+      else reject(new Error(err));
     });
-
-    app.get("/contact", (req, res) => {
-    res.render("contact.ejs", { content: aboutContent });
-    });
-
-    app.get("/compose", (req, res) => {
-    res.render("compose.ejs");
-    });
-*/
-
-app.get("/posts/:postTitle", (req, res) => {
-  const reqTitle = _.lowerCase(req.params.postTitle);
-  //console.log(reqTitle);
-
-  
-
-  posts.forEach((e) => {
-      const postsTitle = _.lowerCase(e.title);
-
-      if (postsTitle === reqTitle) {
-          //console.log("Match Found");
-          res.render("post", {post: e});
-      } 
-    //   else {
-    //       console.log("Not a Match");
-    //   }
-  });
-  //res.render(req.params.nav + ".ejs", { content: aboutContent });
+  })
+    .then((post) => res.render("post", { post }))
+    .catch(console.log);
 });
 
 app.post("/compose", (req, res) => {
-  const post = {
+  // add to blogDB
+  const postToDB = new Post({
     title: req.body.postTitle,
-    body: req.body.postBody,
-  };
+    content: req.body.postBody,
+  });
+  postToDB.save();
 
-  posts.push(post);
-  //console.log(post);
-  //console.log(_.kebabCase(posts[0].title));
   res.redirect("/");
 });
 
