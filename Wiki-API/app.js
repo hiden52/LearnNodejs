@@ -10,9 +10,10 @@ app.set("view engine", "ejs");
 
 app.use(
   bodyParser.urlencoded({
-    extended: true,
+    extended: true
   })
 );
+app.use(bodyParser.json());
 app.use(express.static("public"));
 
 mongoose.Promise = global.Promise;
@@ -42,7 +43,6 @@ app.get("/", (req, res) => {
   res.render("post", {});
 });
 
-
 ///////////////////////////////// Request Targetting All Articles
 app
   .route("/article") //
@@ -56,6 +56,7 @@ app
     });
   })
   .post((req, res) => {
+    //console.log(req);
     const newArticle = new Article({
       title: req.body.title,
       content: req.body.content,
@@ -74,18 +75,50 @@ app
     });
   });
 
-
-  /////////////////////////// Request Targetting A Specific Article //
-  app
+/////////////////////////// Request Targetting A Specific Article //
+app
   .route("/article/:title") //
   .get((req, res) => {
+    console.log(req.params.title);
     Article.findOne({ title: req.params.title }, (err, foundArticle) => {
       if (foundArticle) res.send(foundArticle);
       else res.send("Not Found");
     });
-  });
-
-
+  })
+  .put((req, res) => {
+    Article.replaceOne(
+      {
+        title: req.params.title,
+      },
+      {
+        title: req.body.title,
+        content: req.body.content,
+      },
+      (err, result) => {
+        if(!err) res.send("Successfully updated article");
+        else res.send(err);
+      }
+    );
+  })
+  .patch((req, res) => {
+    Article.updateOne(
+      {title : req.params.title},
+      { $set: req.body },
+      (err) => {
+        if(!err) res.send("Successfully update article.");
+        else res.send(err);
+      }
+    )
+  })
+  .delete((req, res) => {
+    Article.findOneAndDelete(
+      { title : req.params.title },
+      (err, targetDoc) => {
+        if(targetDoc) res.send(`Title name "${targetDoc.title}" is Deleted!`);
+        else res.send(targetDoc.title + " is not found!!");
+      }
+    )
+  })
 
 app.listen(3000, () => {
   console.log("Server started on port 3000");

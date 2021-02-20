@@ -1,3 +1,13 @@
 // Instead of POSTMAN
 
-DELETE http://localhost:3000/article
+//DELETE http://localhost:3000/article
+
+DELETE  http://localhost:3000/article/롤 HTTP/1.1
+# content-type: application/JSON
+
+
+#     {
+#         "title" : "롤",
+#         "content" : "롤 개노잼 ㅡㅡ"
+        
+#     }
