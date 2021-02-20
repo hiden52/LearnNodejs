@@ -1,4 +1,5 @@
 //jshint esversion:6
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -23,8 +24,7 @@ const userSchema = new mongoose.Schema ({
     password: String
 });
 
-const secret = "Thisisourlittlesecret.";
-userSchema.plugin(encrypt, { secret : secret, encryptedFields: ['password'] });
+userSchema.plugin(encrypt, { secret : process.env.SECRET, encryptedFields: ['password'] });
 
 const User = new mongoose.model("User", userSchema);
 
@@ -50,7 +50,7 @@ app.route("/login")
             // findOne에 성공해서 fillter에 해당하는 doc 반환할 때
             // decryption 하는 것 같음.
             if (foundUser.password === password) {
-                console.log(foundUser);
+                // console.log(foundUser);
                 res.render("secrets");
             }
         }
