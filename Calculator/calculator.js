@@ -10,10 +10,10 @@ app.get("/", (req, res) => {
 } );
 
 app.post("/", (req, res) => {
-    let num1 = Number(req.body.num1);
-    let num2 = Number(req.body.num2);
+    const num1 = Number(req.body.num1);
+    const num2 = Number(req.body.num2);
 
-    let result = num1 + num2;
+    const result = num1 + num2;
 
     res.send("Result: " + result);
 })
@@ -22,10 +22,11 @@ app.get("/bmicalculator", (req, res) => {
     res.sendFile( __dirname + "/bmiCalculator.html");
 });
 app.post("/bmicalculator", (req, res) => {
-    let height = parseFloat(req.body.height);
-    let weight = parseFloat(req.body.weight);
+    const height = parseFloat(req.body.height);
+    const weight = parseFloat(req.body.weight);
+    console.log(height + " " + weight);
 
-    let bmi = (weight / Math.pow(height, 2));
+    const bmi = (weight / Math.pow(height, 2));
 
     res.send("<span>Your BIM is \"<strong>" +  bmi.toFixed(1) + "\"</strong></span>");
 })
